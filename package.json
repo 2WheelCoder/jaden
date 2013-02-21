@@ -1,0 +1,43 @@
+{
+  "name":"jaden",
+  "version":"0.1.0",
+  
+  "author":{
+    "name": "Richard A. Jones",
+    "email": "the@talentedmrjones.com"
+  },
+  
+  "contributors":[
+    {
+    "name": "Richard A. Jones",
+    "email": "the@talentedmrjones.com"
+    }
+  ],
+  
+  "dependencies":{
+    "commander":"1.1.1",
+    "uglify-js":"2.2.5"
+  },
+  
+  "keywords": [
+    "express",
+    "jade",
+    "template",
+    "client",
+    "browser"
+  ],
+  
+  "bin": {
+    "jade": "./bin/jaden"
+  },
+  
+  "engines": {
+    "node": "*"
+  },
+  
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:talentedmrjones/jaden.git"
+  }
+
+}
