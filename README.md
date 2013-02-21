@@ -4,7 +4,7 @@
 
 ## Usage
 
-    jaden [options]
+    $ jaden [options]
 
     Options:
 
