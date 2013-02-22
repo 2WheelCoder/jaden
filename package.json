@@ -1,6 +1,6 @@
 {
   "name":"jaden",
-  "version":"0.1.0",
+  "version":"0.1.1",
   
   "author":{
     "name": "Richard A. Jones",
@@ -16,7 +16,8 @@
   
   "dependencies":{
     "commander":"1.1.1",
-    "uglify-js":"2.2.5"
+    "uglify-js":"2.2.5",
+    "jade":"0.28.1"
   },
   
   "keywords": [
@@ -28,7 +29,7 @@
   ],
   
   "bin": {
-    "jade": "./bin/jaden"
+    "jaden": "./bin/jaden"
   },
   
   "engines": {

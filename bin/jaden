@@ -3,8 +3,8 @@
 var program = require('commander')
   , pkg = require('../package.json')
   , version = pkg.version
-  , jade = require('jade')
   , fs = require('fs')
+  , jade = require('jade')
   , path = require('path')
   , cwd = process.cwd()
   , uglify = require("uglify-js")
@@ -64,12 +64,7 @@ var walk = function (dir) {
 
 var generate = function () {
 
-  output = "window.jade = {\n";
-  output += "  merge:"+jade.runtime.merge.toString();
-  output += "  ,rethrow:"+jade.runtime.rethrow.toString();
-  output += "  ,attrs:"+jade.runtime.attrs.toString();
-  output += "  ,escape:"+jade.runtime.escape.toString();
-  output += '};\n\n';
+  output = fs.readFileSync("./lib/runtime.min.js");
     
   output +='window.templates = {};\n\n';
 
