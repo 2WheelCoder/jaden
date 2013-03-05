@@ -9,7 +9,7 @@ var program = require('commander')
   , path = require('path')
   , cwd = process.cwd()
   , uglify = require("uglify-js")
-  , output
+  , output = ''
   ;
 
 var exit = function (msg) {
@@ -20,26 +20,29 @@ var exit = function (msg) {
 var watchHandler = function (event, filename) {
   console.log('Changes detected. Rebuilding...');
   generate();
-}
+};
 
 // CLI
 
 program
   .version(version)
   .option('-t, --templates <path/to/templates/folder>', 'specify template folder')
-  .option('-d, --destination <path/to/output/file>', 'specify output destination')
+  .option('-d, --destination <path/to/output/file.js>', 'specify output destination as javascript file')
   .option('-p, --pattern [regex]', 'file pattern to match. Only filenames matching this pattern will be included.')
-  .option('-m, --minify', 'classic minification using uglify-js')
+  .option('-n, --namespace [string]','set the namespace. example: "window.Application.templates" defaults to "window.templates". (not used with -r)')
+  .option('-r, --requirejs','export templates as a requirejs module')
+  .option('-m, --minify', 'minification using uglify-js')
   .option('-w, --watch','watch for changes and regenerate templates')
   .parse(process.argv);
   
-if (!program.templates) exit('-t, --templates option is required');
-if (!program.destination) exit('-d, --destination option is required');
+if (!program.templates || !program.destination) exit('-t and -d options are required');
 if (program.templates[0]!='/') program.templates = path.normalize(cwd+'/'+program.templates);
 if (program.destination[0]!='/') program.destination = path.normalize(cwd+'/'+program.destination);
 
 program.pattern = program.pattern || ".";
 program.pattern = new RegExp(program.pattern);
+program.namespace = program.namespace || "window.templates";
+if (program.requirejs) program.namespace = "var templates"; 
 
 /*
   
@@ -54,8 +57,13 @@ var walk = function (dir) {
     var file = path.normalize(dir+'/'+folder);
     if (fs.statSync(file).isDirectory()) walk(file);
     else if (folder.match(program.pattern)) {
-      var template = fs.readFileSync(file);
-      output += 'window.templates["'+dir.replace(program.templates+'/','')+'/'+folder+'"] = '+jade.compile(template, {client:true, compileDebug:false}) + '\n\n';
+
+      var root = dir.replace(program.templates,'');
+      root += '/'+folder;
+      root = root.replace(/^\//,'');
+
+      output += 'templates["'+root+'"] = '+jade.compile(fs.readFileSync(file), {client:true, compileDebug:false}) + '\n\n';
+
       if (program.watch) {
         fs.watch(file, watchHandler);
       }
@@ -65,11 +73,22 @@ var walk = function (dir) {
 
 var generate = function () {
 
-  output = fs.readFileSync(path.normalize(__dirname+"/../lib/runtime.min.js"));
+  if (program.requirejs) output += 'define';
+  else output += program.namespace += '=';
+  
+  output += '(function () { ';
+
+  output += '\n\nvar '+fs.readFileSync(path.normalize(__dirname+"/../lib/runtime.min.js"));
     
-  output +='window.templates = {};\n\n';
+  output += '\n\n var templates = {};\n\n';
 
   walk(program.templates);
+  
+  output += '  return templates;\n\n';
+  output += '})';
+  
+  if (!program.requirejs) output+='()';
+  output += ';';
   
   if (program.minify) output = uglify.minify(output, {fromString: true, mangle:false}).code;
   
