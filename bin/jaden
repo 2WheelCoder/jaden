@@ -61,6 +61,8 @@ var walk = function (dir) {
       var root = dir.replace(program.templates,'');
       root += '/'+folder;
       root = root.replace(/^\//,'');
+      root = root.replace('.jade','');
+      root = root.replace('-','_');
 
       output += 'templates["'+root+'"] = '+jade.compile(fs.readFileSync(file), {client:true, compileDebug:false}) + '\n\n';
 
