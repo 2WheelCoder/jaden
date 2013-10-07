@@ -41,8 +41,13 @@ if (program.destination[0]!='/') program.destination = path.normalize(cwd+'/'+pr
 
 program.pattern = program.pattern || ".";
 program.pattern = new RegExp(program.pattern);
+
+if (program.requirejs && !program.namespace) {
+   exit('--namespace is required when using --requirejs');
+}
+
 program.namespace = program.namespace || "window.templates";
-if (program.requirejs) program.namespace = "var templates"; 
+
 
 /*
   
@@ -75,10 +80,13 @@ var walk = function (dir) {
 
 var generate = function () {
 
-  if (program.requirejs) output += 'define';
-  else output += program.namespace += '=';
+  if (program.requirejs) {
+    output += 'define(\''+program.namespace+'\', [], ';
+  } else {
+    output += program.namespace += '=(';
+  }
   
-  output += '(function () { ';
+  output += 'function () { ';
 
   output += '\n\nvar '+fs.readFileSync(path.normalize(__dirname+"/../lib/runtime.min.js"));
     
