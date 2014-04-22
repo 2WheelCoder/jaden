@@ -15,6 +15,6 @@
       -p, --pattern [regex]                       file pattern to match. Only filenames matching this pattern will be included.
       -m, --minify                                classic minification using uglify-js
       -w, --watch                                 watch for changes and regenerate
-      -n, --namespace [string] set the namespace. example: "window.Application.templates" defaults to "window.templates".
+      -n, --namespace                             [string] set the namespace. example: "window.Application.templates" defaults to "window.templates".
       -r, --requirejs                             export templates as a requirejs module (namespace required)
       -b, --browserify                            export templates for browserify
